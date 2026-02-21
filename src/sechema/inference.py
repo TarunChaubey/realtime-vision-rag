@@ -25,6 +25,7 @@ class Video(Base):
     __table_args__ = {"schema": schema_name}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    file_name = Column(String, nullable=False)
     file_path = Column(String, nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
 
