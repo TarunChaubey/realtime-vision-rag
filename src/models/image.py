@@ -14,14 +14,16 @@ class Image(Base):
     file_path = Column(String, nullable=False)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
 
-    inference_results = relationship(
-        "ImageInferenceResult", back_populates="image",
-        cascade="all, delete-orphan", passive_deletes=True
+    inference_frame = relationship(
+        "InferenceImage",
+        back_populates="image",
+        cascade="all, delete-orphan",
+        passive_deletes=True
     )
 
 
-class ImageInferenceResult(Base):
-    __tablename__ = "image_inference_results"
+class InferenceImage(Base):
+    __tablename__ = "inference_image"
     __table_args__ = {"schema": settings.SCHEMA_NAME}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -39,4 +41,4 @@ class ImageInferenceResult(Base):
     polygon = Column(ARRAY(Float), nullable=True, default=None)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
 
-    image = relationship("Image", back_populates="inference_results")
+    image = relationship("Image", back_populates="inference_frame")

@@ -15,7 +15,7 @@ app = FastAPI(title="Computer Vision Inference API", lifespan=lifespan)
 app.include_router(video_router.router)
 app.include_router(frame_router.router)
 app.include_router(image_router.router)
-app.include_router(inference_router.router)
+# app.include_router(inference_router.router)
 app.include_router(yolo_router.router)
 
 

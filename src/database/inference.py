@@ -1,8 +1,8 @@
 from typing import Optional, List, Literal
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from src.models.frame import InferenceResult
-from src.models.image import ImageInferenceResult
+from src.models.frame import InferenceFrame
+from src.models.image import InferenceImage
 from src.inference_pipeline.base import InferenceOutput
 
 
@@ -12,15 +12,10 @@ async def save_inference_output(
     source_type: Literal["frame", "image"],
     source_id: int,
 ) -> list:
-    """
-    Common writer: persists InferenceOutput detections to the correct table.
-    source_type='frame' → inference_results (linked to frames)
-    source_type='image' → image_inference_results (linked to images)
-    """
     saved = []
     for det in output.detections:
         if source_type == "frame":
-            record = InferenceResult(
+            record = InferenceFrame(
                 frame_id=source_id,
                 class_name=det.class_name, confidence=det.confidence,
                 x_min=det.x_min, y_min=det.y_min,
@@ -28,7 +23,7 @@ async def save_inference_output(
                 polygon=det.polygon,
             )
         else:
-            record = ImageInferenceResult(
+            record = InferenceImage(
                 image_id=source_id,
                 class_name=det.class_name, confidence=det.confidence,
                 x_min=det.x_min, y_min=det.y_min,
@@ -43,14 +38,12 @@ async def save_inference_output(
     return saved
 
 
-# --- Standard CRUD for InferenceResult (frame-linked) ---
-
 async def create_inference(
     db: AsyncSession, frame_id: int, class_name: str, confidence: float,
     x_min: float, y_min: float, x_max: float, y_max: float,
     polygon: Optional[List[float]] = None,
-) -> InferenceResult:
-    record = InferenceResult(
+) -> InferenceFrame:
+    record = InferenceFrame(
         frame_id=frame_id, class_name=class_name, confidence=confidence,
         x_min=x_min, y_min=y_min, x_max=x_max, y_max=y_max, polygon=polygon,
     )
@@ -60,13 +53,13 @@ async def create_inference(
     return record
 
 
-async def get_inference_by_id(db: AsyncSession, inference_id: int) -> Optional[InferenceResult]:
-    result = await db.execute(select(InferenceResult).where(InferenceResult.id == inference_id))
+async def get_inference_by_id(db: AsyncSession, inference_id: int) -> Optional[InferenceFrame]:
+    result = await db.execute(select(InferenceFrame).where(InferenceFrame.id == inference_id))
     return result.scalar_one_or_none()
 
 
-async def update_inference(db: AsyncSession, inference_id: int, **kwargs) -> Optional[InferenceResult]:
-    result = await db.execute(select(InferenceResult).where(InferenceResult.id == inference_id))
+async def update_inference(db: AsyncSession, inference_id: int, **kwargs) -> Optional[InferenceFrame]:
+    result = await db.execute(select(InferenceFrame).where(InferenceFrame.id == inference_id))
     inference = result.scalar_one_or_none()
     if not inference:
         return None
@@ -79,7 +72,7 @@ async def update_inference(db: AsyncSession, inference_id: int, **kwargs) -> Opt
 
 
 async def delete_inference(db: AsyncSession, inference_id: int) -> bool:
-    result = await db.execute(select(InferenceResult).where(InferenceResult.id == inference_id))
+    result = await db.execute(select(InferenceFrame).where(InferenceFrame.id == inference_id))
     inference = result.scalar_one_or_none()
     if not inference:
         return False

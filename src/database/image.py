@@ -2,7 +2,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from src.models.image import Image, ImageInferenceResult
+from src.models.image import Image, InferenceImage
 
 
 async def create_image(db: AsyncSession, file_name: str, file_path: str) -> Image:
@@ -16,7 +16,7 @@ async def create_image(db: AsyncSession, file_name: str, file_path: str) -> Imag
 async def get_image_by_id(db: AsyncSession, image_id: int) -> Optional[Image]:
     result = await db.execute(
         select(Image).where(Image.id == image_id)
-        .options(selectinload(Image.inference_results))
+        .options(selectinload(Image.inference_frame))
     )
     return result.scalar_one_or_none()
 

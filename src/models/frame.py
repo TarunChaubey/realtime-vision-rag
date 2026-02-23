@@ -15,14 +15,14 @@ class Frame(Base):
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
 
     video = relationship("Video", back_populates="frames")
-    inference_results = relationship(
-        "InferenceResult", back_populates="frame",
+    inference_frame = relationship(
+        "InferenceFrame", back_populates="frame",
         cascade="all, delete-orphan", passive_deletes=True
     )
 
 
-class InferenceResult(Base):
-    __tablename__ = "inference_results"
+class InferenceFrame(Base):
+    __tablename__ = "inference_frame"
     __table_args__ = {"schema": settings.SCHEMA_NAME}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -36,4 +36,4 @@ class InferenceResult(Base):
     polygon = Column(ARRAY(Float), nullable=True, default=None)
     created_at = Column(TIMESTAMP, server_default=func.now(), nullable=False)
 
-    frame = relationship("Frame", back_populates="inference_results")
+    frame = relationship("Frame", back_populates="inference_frame")

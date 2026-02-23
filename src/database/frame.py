@@ -14,7 +14,7 @@ async def create_frame(db: AsyncSession, video_id: int, frame_number: int, frame
 async def get_frame_by_id(db: AsyncSession, frame_id: int) -> Optional[Frame]:
     result = await db.execute(
         select(Frame).where(Frame.id == frame_id)
-        .options(selectinload(Frame.inference_results))
+        .options(selectinload(Frame.inference_frame))
     )
     return result.scalar_one_or_none()
 

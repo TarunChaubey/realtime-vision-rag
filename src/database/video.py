@@ -15,7 +15,7 @@ async def create_video(db: AsyncSession, file_name: str, file_path: str) -> Vide
 async def get_video_by_id(db: AsyncSession, video_id: int) -> Optional[Video]:
     result = await db.execute(
         select(Video).where(Video.id == video_id)
-        .options(selectinload(Video.frames).selectinload(Frame.inference_results))
+        .options(selectinload(Video.frames).selectinload(Frame.inference_frame))
     )
     return result.scalar_one_or_none()
 
